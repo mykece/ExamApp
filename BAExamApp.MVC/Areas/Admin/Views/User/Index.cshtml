@@ -1,0 +1,278 @@
+﻿@model IEnumerable<AdminTrainerListVM>
+
+@{
+    ViewData["Title"] = ViewLocalizer["User"];
+}
+<head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+</head>
+<style>
+    .menu-item {
+        text-align: left;
+        padding-left: 10px;
+    }
+
+    .tooltip-inner {
+        max-width: 350px !important;
+    }
+
+    #kt_table_users tbody td {
+        padding: 4px !important;
+        vertical-align: middle;
+    }
+   
+
+    .pagination .page-item {
+            margin: 0 2px; /* Sayfa numaraları arasına mesafe */
+    }
+    .pagination .page-item.active .page-link {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+
+    .pagination .page-link {
+        color: #212e48;
+    }
+
+   .pagination .page-link:hover {
+            color: #007bff;
+            background-color: #f5f5f5 ;
+   }
+
+    #veriTablosu {
+        table-layout: fixed; /* Sütun genişliklerini sabitle */
+        width: 100%; /* Tabloyu tam genişlikte yap */
+        
+    }
+
+        #veriTablosu th,
+        #veriTablosu td {
+            width: 20%; /* Her sütuna eşit genişlik ver */
+            padding: 10px; /* Hücre içi boşluk */
+            text-align: left; /* Sol hizalama */           
+            white-space: nowrap; /* Uzun metinlerin taşmasını önle */
+            overflow: hidden; /* Taşan metinleri gizle */
+            text-overflow: ellipsis; /* Uzun metinlerde "..." göster */
+        }
+
+        #veriTablosu th {
+            background-color: #f8f9fa; /* Başlık arka plan rengi */
+            font-weight: bold; /* Kalın yazı tipi */
+        }
+
+    .card {
+        margin: auto; /* Kartı ortala */
+        
+    }
+
+    .card-body {
+        padding: 20px; /* İç boşluk */
+        overflow-x: auto; /* Yatay kaydırmayı etkinleştir */
+    }
+
+    .section.dashboard {
+        padding: 20px; /* Sayfanın dış boşluğu */
+    }
+
+    .pagination {
+        display: fixed; /* Yan yana hizala */
+        justify-content: center; /* Ortala */
+        margin: 20px 0; /* Dış boşluk */
+        padding: 10px; /* İç boşluk */
+
+    }
+   
+
+
+</style>
+<section class="section dashboard">
+<div class="card py-4">
+    <div class="card-body fs-6 py-15 px-10 py-lg-15 px-lg-15 text-gray-700">
+        <div class="d-flex justify-content-between">
+            <h5 style="display: flex; align-items: center;">
+                @SharedLocalizer["List", SharedLocalizer["Trainer"]]
+                <span class="material-symbols-outlined" style="margin-left: 5px; font-size: 130%;" data-bs-toggle="tooltip" data-bs-placement="right" title="@SharedLocalizer["Trainer_Filter_Warning"]">info</span>
+            </h5>
+        </div>
+        <div class="d-flex align-items-center position-relative my-1">
+            <form asp-controller="User" asp-action="Index" method="get" class="d-flex align-items-center">
+                <span class="svg-icon svg-icon-1 position-absolute ps-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1" transform="rotate(45 17.0365 15.1223)" fill="currentColor" />
+                        <path d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z" fill="currentColor" />
+                    </svg>
+                </span>
+                <div class="form-group">
+                        <input type="text" name="trainerName" id="searchInput" data-kt-user-table-filter="search" class="form-control form-control-solid w-250px ps-14" placeholder="@SharedLocalizer["Search_Trainer"]" />
+                </div>
+                <button type="submit" id="searchButton" class="btn btn-primary btn-lg hover-elevate-up ms-3" data-kt-user-table-filter="form">
+                    @SharedLocalizer["Show"]
+                </button>
+            </form>
+        </div>
+        <div class="card-body py-4">
+                <table class="table align-middle table-row-dashed fs-6 gy-5" id="veriTablosu">
+                <thead>
+                    <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+                        <th>@SharedLocalizer["Name"]</th>
+                        <th>@SharedLocalizer["Last_Name"]</th>
+                        <th>@SharedLocalizer["Email"]</th>
+                        <th>@SharedLocalizer["Transactions"]</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 fw-bold">
+                    @foreach (var trainer in Model)
+                    {
+                        var firstNameParts = trainer.FirstName.Split(' ');
+                        var formattedFirstName = string.Join(" ", firstNameParts.Select((part, index) => index > 0 ? char.ToUpper(part[0]) + part.Substring(1) : part));
+                        <tr>
+                            <td>@formattedFirstName</td>
+                            <td>@trainer.LastName</td>
+                            <td style="overflow:hidden; white-space: nowrap; text-overflow: ellipsis; max-width:200px;">@trainer.Email</td>
+                            <td>
+                                <a class="btn btn-sm btn-primary" asp-area="Admin" asp-action="LoginAsTrainer" asp-controller="User" asp-route-trainerId="@trainer.Id">
+                                    @SharedLocalizer["Change_Role"]
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-between align-items-center flex-wrap mt-4">
+                <div class="col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start">
+                    <select id="itemsPerPageDropdown" class="form-select form-select-sm form-select-solid" style="width:auto">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <span id="trainerCount" class="ms-2" style="white-space: nowrap;"></span>
+                </div>
+                <ul class="pagination" id="pagination"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        let itemsPerPage = 10;
+        const trainers = $('#veriTablosu tbody tr');
+        const totalItems = trainers.length;
+
+        function calculateTotalPages() {
+            return Math.ceil(totalItems / itemsPerPage);
+        }
+        function showPage(page, data) {
+            const trainersToShow = data || trainers;
+            trainersToShow.hide();
+            const totalPages = Math.ceil(trainersToShow.length / itemsPerPage);
+
+            // Önceki veya sonraki buton kontrolü
+            if (page === 'prev') {
+                const currentPage = $('#pagination .page-item.active .page-link').data('page');
+                page = Math.max(1, currentPage - 1);
+            } else if (page === 'next') {
+                const currentPage = $('#pagination .page-item.active .page-link').data('page');
+                page = Math.min(totalPages, currentPage + 1);
+            }
+
+            // Aktif sayfa numarasını vurgula
+            $('#pagination .page-item').removeClass('active');
+            $(`#pagination .page-item:has([data-page="${page}"])`).addClass('active');
+
+            // Sol ok birinci sayfada kaldır
+            if (page === 1) {
+                $('#prevPage').remove();
+            } else if ($('#prevPage').length === 0) {
+                $('#pagination').prepend('<li class="page-item" id="prevPage"><a class="page-link" href="#" data-page="prev">&lt;</a></li>');
+            }
+
+            // Sağ ok son sayfada kaldır
+            if (page === totalPages) {
+                $('#nextPage').remove();
+            } else if ($('#nextPage').length === 0) {
+                $('#pagination').append('<li class="page-item" id="nextPage"><a class="page-link" href="#" data-page="next">&gt;</a></li>');
+            }
+
+            // Sayfada gösterilecek kayıtları belirle
+            const startIndex = (page - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            trainersToShow.slice(startIndex, endIndex).show();
+
+            // Gösterim bilgilerini güncelle
+            const startItem = startIndex + 1;
+            const endItem = Math.min(endIndex, trainersToShow.length);
+            $('#trainerCount').text(`Toplam ${trainersToShow.length} kayıttan ${startItem} ile ${endItem} arasındaki kayıtlar gösteriliyor.`);
+        }
+
+        function createPagination(data) {
+            const trainersToPaginate = data || trainers;
+            const totalPages = Math.ceil(trainersToPaginate.length / itemsPerPage);
+            let paginationHtml = '';
+
+            if (totalPages > 1) {
+                paginationHtml += '<li class="page-item" id="prevPage"><a class="page-link" href="#" data-page="prev">&lt;</a></li>';
+            }
+
+            for (let i = 1; i <= totalPages; i++) {
+                paginationHtml += `<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
+            }
+
+            // Sağ ok ekle
+            if (totalPages > 1) {
+                paginationHtml += '<li class="page-item" id="nextPage"><a class="page-link" href="#" data-page="next">&gt;</a></li>';
+            }
+
+            $('#pagination').html(paginationHtml);
+
+            // İlk sayfayı aktif yap
+            $('#pagination .page-item:nth-child(2)').addClass('active');
+        }
+
+        $('#searchButton').click(function (e) {
+            e.preventDefault();
+
+            const searchQuery = $('#searchInput').val().toLowerCase();
+
+            if (searchQuery.trim() === '') {
+                // Arama boşsa tüm kayıtlar için pagination oluştur
+                trainers.hide();
+                createPagination(trainers);
+                showPage(1, trainers);
+            } else {
+                // Arama filtresi
+                const filteredTrainers = trainers.filter(function () {
+                    return $(this).text().toLowerCase().indexOf(searchQuery) > -1;
+                });
+
+                // Filtrelenen kayıtları göster
+                trainers.hide();
+                filteredTrainers.show();
+
+                // Filtrelenen kayıtlar için pagination oluştur ve ilk sayfayı göster
+                createPagination(filteredTrainers);
+                showPage(1, filteredTrainers);
+            }
+        });
+        
+
+        $('#pagination').on('click', '.page-link', function (e) {
+            e.preventDefault();
+            const page = $(this).data('page');
+            if (page) showPage(page);
+        });
+
+        $('#itemsPerPageDropdown').change(function () {
+            itemsPerPage = parseInt($(this).val());
+            createPagination();
+            showPage(1);
+        });
+
+        createPagination();
+        showPage(1);
+
+    });
+</script>
