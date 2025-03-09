@@ -1,3 +1,7 @@
+Detailed Description:
+
+ExamApp is a web-based platform developed using JavaScript, CSS, HTML, C#, and SCSS, aimed at providing a seamless experience for managing exams. The application allows teachers to create and manage exams, add questions, and categorize them based on subjects. Students can take exams and view their results, while administrators can oversee the entire process, ensuring everything runs smoothly. The project utilizes ASP.NET Core for backend development and integrates with SQL Server for robust data management. With a focus on user authentication and authorization, ExamApp ensures that all users can securely access and manage their respective functionalities.
+
 ## 📌 Project Description
 
 ExamApp is a web application that allows users to create, manage, and analyze exam results. This project aims to digitalize the exam processes for educational institutions, teachers, and students.
